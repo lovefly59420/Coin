@@ -77,6 +77,4 @@ public class CoindeskService {
         Currentprice currentprice = gson.fromJson(dataJson, Currentprice.class);
         return currentprice;
     }
-
-
 }

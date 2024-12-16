@@ -38,7 +38,7 @@ public class CoindeskServiceTest {
         try{
             timeTemplate.setUpdatedISO(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2024-12-16 11:00:40"));
         }catch (Exception e){
-
+            System.out.println("error parse: " + e.getMessage());
         }
         timeTemplate.setUpdateduk("Dec 16, 2024 at 03:00 GMT");
         currentprice.setTime(timeTemplate);
@@ -68,7 +68,7 @@ public class CoindeskServiceTest {
         try{
             timeTemplate.setUpdatedISO(new SimpleDateFormat(SimpleDateFormatEnum.YYYY_MM_DD_HH_MM_SS.getDateTimeFormatString()).parse("2024/12/16 11:00:40"));
         }catch (Exception e){
-
+            System.out.println("error parse: " + e.getMessage());
         }
         timeTemplate.setUpdateduk("Dec 16, 2024 at 03:00 GMT");
         currentprice.setTime(timeTemplate);
