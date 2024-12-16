@@ -2,6 +2,7 @@ package com.joy.coin.controllerTest;
 
 import com.joy.coin.controller.CoinCategoryController;
 import com.joy.coin.controller.CoindeskController;
+import com.joy.coin.dto.ErrorCodeEnum;
 import com.joy.coin.dto.Response;
 import com.joy.coin.entity.CoinCategory;
 import org.assertj.core.util.Lists;
@@ -11,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -27,7 +29,7 @@ public class CoindeskControllerTest {
     @Test
     public void test_getData(){
         ResponseEntity<Response> response = coindeskController.getData();
-        assertEquals(HttpStatus.OK,response.getStatusCode());
+        assertEquals(ErrorCodeEnum.OK.getErrorCode(), response.getBody().getStatusCode());
 
         System.out.println("==============================");
         System.out.println("單元測試5: ");
@@ -38,13 +40,13 @@ public class CoindeskControllerTest {
     @Test
     public void test_transformData(){
         List<CoinCategory> coinCategorys = Lists.list(
-                new CoinCategory("USD","美金"),
-                new CoinCategory("EUR","歐元"),
-                new CoinCategory("GBP","英鎊"));
+                new CoinCategory("USD","美金", new Date()),
+                new CoinCategory("EUR","歐元", new Date()),
+                new CoinCategory("GBP","英鎊", new Date()));
         ResponseEntity<Response> saveResponse = coinCategoryController.addAll(coinCategorys);
 
         ResponseEntity<Response> response = coindeskController.transformData();
-        assertEquals(HttpStatus.OK,response.getStatusCode());
+        assertEquals(ErrorCodeEnum.OK.getErrorCode(), response.getBody().getStatusCode());
 
         System.out.println("==============================");
         System.out.println("單元測試6:");

@@ -1,5 +1,7 @@
 package com.joy.coin.serviceTest;
 
+import com.joy.coin.dto.ErrorCodeEnum;
+import com.joy.coin.dto.MessageEnum;
 import com.joy.coin.dto.Response;
 import com.joy.coin.entity.CoinCategory;
 import com.joy.coin.repository.CoinCategoryRepository;
@@ -11,10 +13,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,16 +31,15 @@ public class CoinCategoryServiceTest {
     @InjectMocks
     private CoinCategoryService coinCategoryService;
 
-
     @Test
     public void test_findAll(){
         List<CoinCategory> coinCategorys = Lists.list(
-                new CoinCategory("USD","美金"),
-                new CoinCategory("EUR","歐元"),
-                new CoinCategory("GBP","英鎊"));
+                new CoinCategory("USD","美金", new Date()),
+                new CoinCategory("EUR","歐元", new Date()),
+                new CoinCategory("GBP","英鎊", new Date()));
         Response mockResponse = new Response();
-        mockResponse.setStatusCode(200);
-        mockResponse.setMessage("find all coin category success");
+        mockResponse.setStatusCode(ErrorCodeEnum.OK.getErrorCode());
+        mockResponse.setMessage(MessageEnum.FIND_ALL_SUCCESS.getMessage());
         mockResponse.setCoinCategoryList(coinCategorys);
 
         when(coinCategoryRepository.findAll()).thenReturn(coinCategorys);
@@ -46,12 +50,12 @@ public class CoinCategoryServiceTest {
     @Test
     public void test_findByCurrency(){
         List<CoinCategory> coinCategorys = Lists.list(
-                new CoinCategory("USD","美金"),
-                new CoinCategory("EUR","歐元"),
-                new CoinCategory("GBP","英鎊"));
+                new CoinCategory("USD","美金", new Date()),
+                new CoinCategory("EUR","歐元", new Date()),
+                new CoinCategory("GBP","英鎊", new Date()));
         Response mockResponse = new Response();
-        mockResponse.setStatusCode(200);
-        mockResponse.setMessage("find coin category success");
+        mockResponse.setStatusCode(ErrorCodeEnum.OK.getErrorCode());
+        mockResponse.setMessage(MessageEnum.FIND_BY_SUCCESS.getMessage());
         mockResponse.setCoinCategory(coinCategorys.get(0));
 
         when(coinCategoryRepository.findByCurrency("USD")).thenReturn(Optional.of(coinCategorys.get(0)));
@@ -62,12 +66,12 @@ public class CoinCategoryServiceTest {
     @Test
     public void test_saveAll(){
         List<CoinCategory> coinCategorys = Lists.list(
-                new CoinCategory("USD","美金"),
-                new CoinCategory("EUR","歐元"),
-                new CoinCategory("GBP","英鎊"));
+                new CoinCategory("USD","美金", new Date()),
+                new CoinCategory("EUR","歐元", new Date()),
+                new CoinCategory("GBP","英鎊", new Date()));
         Response mockResponse = new Response();
-        mockResponse.setStatusCode(200);
-        mockResponse.setMessage("save coin category success");
+        mockResponse.setStatusCode(ErrorCodeEnum.OK.getErrorCode());
+        mockResponse.setMessage(MessageEnum.SAVE_ALL_SUCCESS.getMessage());
         mockResponse.setCoinCategoryList(coinCategorys);
 
         when(coinCategoryRepository.saveAll(coinCategorys)).thenReturn(coinCategorys);
@@ -77,25 +81,25 @@ public class CoinCategoryServiceTest {
 
     @Test
     public void test_update(){
-        CoinCategory coinCategory = new CoinCategory("USD","美金");
-        CoinCategory updateCoinCategory = new CoinCategory("USD","美金_update");
+        CoinCategory coinCategory = new CoinCategory(99L,"USD","美金", new Date(),null);
+        CoinCategory updateCoinCategory = new CoinCategory(99L,"USD","美金_update", new Date(),new Date());
         Response mockResponse = new Response();
-        mockResponse.setStatusCode(200);
-        mockResponse.setMessage("update coin category success");
+        mockResponse.setStatusCode(ErrorCodeEnum.OK.getErrorCode());
+        mockResponse.setMessage(MessageEnum.UPDATE_SUCCESS.getMessage());
         mockResponse.setCoinCategory(updateCoinCategory);
 
         when(coinCategoryRepository.findByCurrency("USD")).thenReturn(Optional.of(coinCategory));
-        when(coinCategoryRepository.save(updateCoinCategory)).thenReturn(updateCoinCategory);
+        given(coinCategoryRepository.save(any(CoinCategory.class))).willReturn(updateCoinCategory);
         Response response = coinCategoryService.update("USD","美金_update");
         assertEquals(mockResponse,response);
     }
 
     @Test
     public void test_remove(){
-        CoinCategory coinCategory = new CoinCategory("USD","美金");
+        CoinCategory coinCategory = new CoinCategory("USD","美金", new Date());
         Response mockResponse = new Response();
-        mockResponse.setStatusCode(200);
-        mockResponse.setMessage("delete coin category success");
+        mockResponse.setStatusCode(ErrorCodeEnum.OK.getErrorCode());
+        mockResponse.setMessage(MessageEnum.REMOVE_SUCCESS.getMessage());
         mockResponse.setCoinCategory(coinCategory);
 
         when(coinCategoryRepository.findByCurrency("USD")).thenReturn(Optional.of(coinCategory));
@@ -103,7 +107,9 @@ public class CoinCategoryServiceTest {
         assertEquals(mockResponse,response);
     }
 
-
-
-
+    @Test
+    public void test_removeAll(){
+        Response response = coinCategoryService.removeAll();
+        assertEquals(ErrorCodeEnum.OK.getErrorCode(),response.getStatusCode());
+    }
 }

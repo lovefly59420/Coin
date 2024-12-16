@@ -20,14 +20,12 @@ public class CoindeskController {
     @GetMapping("/get/data")
     public ResponseEntity<Response> getData(){
         Response response = coindeskService.getCoindesk();
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return ResponseEntity.status(response.getStatusCode()).body(response);
     }
 
     @GetMapping("/transform/data")
     public ResponseEntity<Response> transformData(){
         Response response = coindeskService.transformCoindesk();
-        response.setStatusCode(200);
-        response.setMessage("transform coindesk data success");
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return ResponseEntity.status(response.getStatusCode()).body(response);
     }
 }

@@ -3,7 +3,6 @@ package com.joy.coin.serviceTest;
 import com.joy.coin.dto.*;
 import com.joy.coin.entity.CoinCategory;
 import com.joy.coin.repository.CoinCategoryRepository;
-import com.joy.coin.service.CoinCategoryService;
 import com.joy.coin.service.CoindeskService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -51,8 +50,8 @@ public class CoindeskServiceTest {
         bpiMap.put("EUR",new BpiDetail("EUR","&euro;","99,289.967","Euro",99289.9672));
         currentprice.setBpi(bpiMap);
         mockResponse.setCurrentprice(currentprice);
-        mockResponse.setStatusCode(200);
-        mockResponse.setMessage("get coindesk data success");
+        mockResponse.setStatusCode(ErrorCodeEnum.OK.getErrorCode());
+        mockResponse.setMessage(MessageEnum.GET_COINDESK_DATA_SUCCESS.getMessage());
 
         when(restTemplate.getForObject("https://api.coindesk.com/v1/bpi/currentprice.json",String.class)).thenReturn("{\"time\":{\"updated\":\"Dec 16, 2024 03:00:40 UTC\",\"updatedISO\":\"2024-12-16T03:00:40+00:00\",\"updateduk\":\"Dec 16, 2024 at 03:00 GMT\"},\"disclaimer\":\"This data was produced from the CoinDesk Bitcoin Price Index (USD). Non-USD currency data converted using hourly conversion rate from openexchangerates.org\",\"chartName\":\"Bitcoin\",\"bpi\":{\"USD\":{\"code\":\"USD\",\"symbol\":\"&#36;\",\"rate\":\"104,565.286\",\"description\":\"United States Dollar\",\"rate_float\":104565.2859},\"GBP\":{\"code\":\"GBP\",\"symbol\":\"&pound;\",\"rate\":\"81,819.513\",\"description\":\"British Pound Sterling\",\"rate_float\":81819.513},\"EUR\":{\"code\":\"EUR\",\"symbol\":\"&euro;\",\"rate\":\"99,289.967\",\"description\":\"Euro\",\"rate_float\":99289.9672}}}");
 
@@ -67,7 +66,7 @@ public class CoindeskServiceTest {
         TimeTemplate timeTemplate = new TimeTemplate();
         timeTemplate.setUpdated("Dec 16, 2024 03:00:40 UTC");
         try{
-            timeTemplate.setUpdatedISO(new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").parse("2024/12/16 11:00:40"));
+            timeTemplate.setUpdatedISO(new SimpleDateFormat(SimpleDateFormatEnum.YYYY_MM_DD_HH_MM_SS.getDateTimeFormatString()).parse("2024/12/16 11:00:40"));
         }catch (Exception e){
 
         }
@@ -81,13 +80,13 @@ public class CoindeskServiceTest {
                 new CurrencyInformation("EUR","英鎊","99,289.967")
         );
         mockResponse.setStatusCode(200);
-        mockResponse.setMessage("transform coindesk success");
+        mockResponse.setMessage(MessageEnum.TRANSFORM_COINDESK_SUCCESS.getMessage());
         mockResponse.setUpdateTimeString("2024/12/16 11:00:40");
         mockResponse.setCurrencyInformation(currencyInformationList);
 
-        CoinCategory USDCoinCategory = new CoinCategory("USD","美金");
-        CoinCategory GBPCoinCategory = new CoinCategory("GBP","歐元");
-        CoinCategory EURCoinCategory = new CoinCategory("EUR","英鎊");
+        CoinCategory USDCoinCategory = new CoinCategory("USD","美金", new Date());
+        CoinCategory GBPCoinCategory = new CoinCategory("GBP","歐元", new Date());
+        CoinCategory EURCoinCategory = new CoinCategory("EUR","英鎊", new Date());
 
         when(restTemplate.getForObject("https://api.coindesk.com/v1/bpi/currentprice.json",String.class)).thenReturn("{\"time\":{\"updated\":\"Dec 16, 2024 03:00:40 UTC\",\"updatedISO\":\"2024-12-16T03:00:40+00:00\",\"updateduk\":\"Dec 16, 2024 at 03:00 GMT\"},\"disclaimer\":\"This data was produced from the CoinDesk Bitcoin Price Index (USD). Non-USD currency data converted using hourly conversion rate from openexchangerates.org\",\"chartName\":\"Bitcoin\",\"bpi\":{\"USD\":{\"code\":\"USD\",\"symbol\":\"&#36;\",\"rate\":\"104,565.286\",\"description\":\"United States Dollar\",\"rate_float\":104565.2859},\"GBP\":{\"code\":\"GBP\",\"symbol\":\"&pound;\",\"rate\":\"81,819.513\",\"description\":\"British Pound Sterling\",\"rate_float\":81819.513},\"EUR\":{\"code\":\"EUR\",\"symbol\":\"&euro;\",\"rate\":\"99,289.967\",\"description\":\"Euro\",\"rate_float\":99289.9672}}}");
         when(coinCategoryRepository.findByCurrency("USD")).thenReturn(Optional.of(USDCoinCategory));

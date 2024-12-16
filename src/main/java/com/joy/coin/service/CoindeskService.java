@@ -1,10 +1,7 @@
 package com.joy.coin.service;
 
 import com.google.gson.Gson;
-import com.joy.coin.dto.BpiDetail;
-import com.joy.coin.dto.CurrencyInformation;
-import com.joy.coin.dto.Currentprice;
-import com.joy.coin.dto.Response;
+import com.joy.coin.dto.*;
 import com.joy.coin.entity.CoinCategory;
 import com.joy.coin.repository.CoinCategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,22 +28,21 @@ public class CoindeskService {
             Currentprice currentprice = this.getCurrentpriceFromApi();
 
             response.setCurrentprice(currentprice);
-            response.setStatusCode(200);
-            response.setMessage("get coindesk data success");
+            response.setStatusCode(ErrorCodeEnum.OK.getErrorCode());
+            response.setMessage(MessageEnum.GET_COINDESK_DATA_SUCCESS.getMessage());
         }catch (Exception e){
-            response.setStatusCode(500);
-            response.setMessage("error get coindesk data");
+            response.setStatusCode(ErrorCodeEnum.EXCEPTION.getErrorCode());
+            response.setMessage(MessageEnum.GET_COINDESK_DATA_ERROR.getMessage() + e.getMessage());
         }
         return response;
     }
-
 
     public Response transformCoindesk(){
         Response response = new Response();
         try{
             Currentprice currentprice = this.getCurrentpriceFromApi();
 
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+            SimpleDateFormat sdf = new SimpleDateFormat(SimpleDateFormatEnum.YYYY_MM_DD_HH_MM_SS.getDateTimeFormatString());
             String dateStr = sdf.format(currentprice.getTime().getUpdatedISO());
 
             response.setUpdateTimeString(dateStr);
@@ -65,15 +61,14 @@ public class CoindeskService {
                 CurrencyInformations.add(currencyInformation);
             }
             response.setCurrencyInformation(CurrencyInformations);
-            response.setStatusCode(200);
-            response.setMessage("transform coindesk success");
+            response.setStatusCode(ErrorCodeEnum.OK.getErrorCode());
+            response.setMessage(MessageEnum.TRANSFORM_COINDESK_SUCCESS.getMessage());
         }catch (Exception e){
-            response.setStatusCode(500);
-            response.setMessage("error transform coindesk" + e.getMessage());
+            response.setStatusCode(ErrorCodeEnum.EXCEPTION.getErrorCode());
+            response.setMessage(MessageEnum.TRANSFORM_COINDESK_ERROR.getMessage() + e.getMessage());
         }
         return response;
     }
-
 
     private Currentprice getCurrentpriceFromApi(){
         String url = "https://api.coindesk.com/v1/bpi/currentprice.json";
