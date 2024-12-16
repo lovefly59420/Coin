@@ -1,0 +1,6 @@
+CREATE TABLE `coin_category` (
+	`currency` VARCHAR(255) NOT NULL ,
+	`currency_chinese_name` VARCHAR(255) NULL DEFAULT NULL ,
+	PRIMARY KEY (`currency`) USING BTREE
+)
+;
